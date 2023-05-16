@@ -6,14 +6,13 @@ const petsDb = require('../db-mock/MockPets.json'); // mock db
 const dbConnection = require('../db/knex.js') // SQL db connection
 
 async function getPetList() {
-    // connection to SQL db
+    // SQL database connection
     try {
         const petList = await dbConnection.from('pets');
         return petList;
     } catch (err) {
         console.log(err)
     }
-
     // before SQL connection
     // const petListJson = fs.readFileSync(pathToPetsDB, 'utf8')
     // const petList = JSON.parse(petListJson)
@@ -21,14 +20,13 @@ async function getPetList() {
 }
 
 async function getPetDetails(petId) {
-    // connection to SQL db
+    // SQL database connection
     try {
-        const petDetails = await dbConnection.from('pets').where({ id: petId })
+        const petDetails = await dbConnection.from('pets').where({ id: petId }).first() //send first onbject in the array
         return petDetails;
     } catch (err) {
         console.log(err)
     }
-
     // before SQL
     // const petList = getPetList();
     // const petIndex = petList.findIndex(pet => pet.id == petId);
@@ -37,7 +35,7 @@ async function getPetDetails(petId) {
 }
 
 async function addNewPet(newPet) {
-    // connection to SQL db
+    // SQL database connection
     try {
         const [petId] = await dbConnection.from('pets').insert(newPet); // returns db table primary id
         newPet.id = petId; // db automatically give an id, update append id to the new pet in the FE
@@ -45,7 +43,6 @@ async function addNewPet(newPet) {
     } catch (err) {
         console.log(err)
     }
-
     // before SQL connection
     // const newPetWithId = {
     //     ...newPet,
@@ -65,15 +62,13 @@ async function addNewPet(newPet) {
 }
 
 async function updatePetDetails(petId, petUpdates) {
-    // TODO: SQL db cnxn
-    const petList = await getPetList()
-    const petIndex = petList.findIndex(pet => pet.id == petId);
-    const updatedPet = {
-        ...petList[petIndex],
-        ...petUpdates
+    // TODO: SQL database connection
+    try {
+        const numOfChanges = await dbConnection.from('pets').where({ id: petId }).update({ ...petUpdates });
+        return numOfChanges;
+    } catch (err) {
+        console.log(err)
     }
-    petList[petIndex] = updatedPet;
-
     // before SQL connection
     // const petList = getPetList()
     // const petIndex = petList.findIndex(pet => pet.id == petId);
@@ -93,15 +88,14 @@ async function updatePetDetails(petId, petUpdates) {
 }
 
 async function deletePetDetails(petId) {
-    // TODO: connect to SQL database
+    // SQL database connection
     try {
-        const isDeleted = await dbConnection.from('pets').where({id: petId}).del();
+        const isDeleted = await dbConnection.from('pets').where({ id: petId }).del();
         return isDeleted;
         // const petList = await getPetList();
     } catch (err) {
         console.log(err);
     }
-
     // Before SQL
     // const petList = getPetList()
     // const newPetList = petList.filter(pet => pet.id !== petId);

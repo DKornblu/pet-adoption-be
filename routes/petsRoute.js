@@ -4,7 +4,7 @@ const router = express.Router() // create new router object to define MW and rou
 
 const PetsController = require('../controllers/petsController') // import controller module for handling pet reqs
 
-// Routes: get all pets, get one pet, add pet, update pet,  TODO: delete pet
+// Routes: get all pets, get one pet, add pet, update pet, delete pet
 
 // GET all pets
 router.get('/', PetsController.getAllPets);
@@ -18,7 +18,7 @@ router.post('/', PetsController.addPets);
 // UPDATE a pet
 router.put('/:id', PetsController.updatePets);
 
-// DELETE TODO:
+// DELETE a pet
 router.delete('/:id', PetsController.deletePet);
 
 module.exports = router

@@ -4,7 +4,7 @@ async function getAllPets(req, res) {
     try {
         const petList = await getPetList();
         console.log(`GET request, got all pets!`)
-        res.send(petList);
+        res.status(200).send(petList);
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
@@ -16,7 +16,7 @@ async function getPets(req, res) {
         const petId = req.params.id;
         const petDetails = await getPetDetails(petId);
         console.log(`GET 1 pet request!`)
-        res.send(petDetails);
+        res.status(200).send(petDetails);
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
@@ -28,7 +28,7 @@ async function addPets(req, res) {
         const newPetReq = req.body;
         const newPet = await addNewPet(newPetReq);
         console.log(`POST request, pet added!`);
-        res.send(newPet);
+        res.status(201).send(newPet);
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)
@@ -40,9 +40,13 @@ function updatePets(req, res) {
     try {
         const petId = req.params.id;
         const petUpdates = req.body;
-        const updatedPet = updatePetDetails(petId, petUpdates)
-        console.log('PUT request, pet updated!')
-        res.send(updatedPet)
+        const numOfChanges = updatePetDetails(petId, petUpdates)
+        if (numOfChanges > 0) {
+            console.log('PUT request, pet updated!')
+            res.send({ ok: true, updatedId: petId, updates: numOfChanges})
+        } else {
+            res.status(400).send({ok: false, message: 'no updates made'})
+        }
     } catch (err) {
         console.log(err)
         res.status(500).send(err.message)

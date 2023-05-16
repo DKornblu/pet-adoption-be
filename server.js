@@ -2,28 +2,17 @@ const express = require('express') // import express functionality for building 
 const cors = require('cors') // import cors module MW func for domain request control 
 const dbConnection = require("./db/knex.js")
 
-
 const PORT = process.env.PORT || 8080 // define PORT from .env OR 8080
 const app = express() // create inst of express BE server
 
 // global MW - run before every req
-app.use(cors())
+app.use(cors()) // bypass default security preventing communication btwn different servers
 app.use(express.json()) //parse incoming JSON
 app.use(express.urlencoded()) //parse incoming URL encoded data
 
 // import pets and users routes
 const petsRoute = require('./routes/petsRoute')
 const usersRoute = require('./routes/usersRoute')
-
-// Before splitting into routes, components, models:
-// ROUTE app.get('/pets', COMPONENT (req, res) => {
-//     try {
-//           MODEL
-//     res.send('this is a full explicit route example')
-//     } catch (err) {
-//         res.status(500).send(err.message)
-//     }
-// })
 
 // global MW for directing reqs to particular routes
 app.use('/pets', petsRoute) // for any req with /pets
