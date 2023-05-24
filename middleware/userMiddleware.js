@@ -38,4 +38,8 @@ async function doesUserExist(req, res, next) {
     }
 }
 
+function auth(req, res, next){
+
+}
+
 module.exports = { doesUserExist, isNewUser, encryptPwd }

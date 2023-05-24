@@ -1,5 +1,5 @@
 
-const { getUserList, getUserByEmail, addNewUser, deleteUserDetails } = require('../models/usersModels')
+const { getUserList, getUserByEmail, addNewUser, deleteUserDetails, savePetByUser, isSavedByUser } = require('../models/usersModels')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
@@ -90,4 +90,25 @@ async function deleteUser(req, res) {
     }
 }
 
-module.exports = { getAllUsers, getSingleUser, signup, deleteUser, login }
+async function savePets(req, res) {
+    try {
+        const saveObject = {
+            'user_id': req.params.userId,
+            'pet_id': req.params.petId
+        };
+        const isSaved = await isSavedByUser(saveObject);
+        console.log(isSaved);
+        if (isSaved) {
+            res.status(200).send("Pet is already saved by user");
+        } else {
+            const saveObjectWithId = await savePetByUser(saveObject);
+            console.log(`SavedId ${saveObjectWithId.id}: Pet ${saveObjectWithId.pet_id} saved by user ${saveObjectWithId.user_id}`)
+            res.status(200).send(saveObjectWithId);
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+    }
+}
+
+module.exports = { getAllUsers, getSingleUser, signup, deleteUser, login, savePets }

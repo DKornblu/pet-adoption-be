@@ -1,4 +1,4 @@
-const { getPetList, getPetDetails, addNewPet, updatePetDetails, deletePetDetails } = require('../models/petsModels')
+const { getPetList, getPetDetails, addNewPet, updatePetDetails, deletePetDetails, getSearchPetList } = require('../models/petsModels')
 
 async function getAllPets(req, res) {
     try {
@@ -11,7 +11,19 @@ async function getAllPets(req, res) {
     }
 }
 
-async function getPets(req, res) {
+async function getSearchedPets(req, res) {
+    try {
+        const qParamsObj = req.query;
+        const filteredList = await getSearchPetList(qParamsObj);
+        console.log('GET search request!');
+        res.status(200).send(filteredList);
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err.message)
+    }
+}
+
+async function getSinglePets(req, res) {
     try {
         const petId = req.params.id;
         const petDetails = await getPetDetails(petId);
@@ -43,9 +55,9 @@ function updatePets(req, res) {
         const numOfChanges = updatePetDetails(petId, petUpdates)
         if (numOfChanges > 0) {
             console.log('PUT request, pet updated!')
-            res.send({ ok: true, updatedId: petId, updates: numOfChanges})
+            res.send({ ok: true, updatedId: petId, updates: numOfChanges })
         } else {
-            res.status(400).send({ok: false, message: 'no updates made'})
+            res.status(400).send({ ok: false, message: 'no updates made' })
         }
     } catch (err) {
         console.log(err)
@@ -53,7 +65,7 @@ function updatePets(req, res) {
     }
 }
 
-async function deletePet(req, res) {
+async function deletePets(req, res) {
     try {
         const petId = req.params.id;
         const isDeleted = await deletePetDetails(petId);
@@ -61,7 +73,7 @@ async function deletePet(req, res) {
             console.log('DELETE request, pet ousted!')
             res.send({ ok: true, deletedId: petId })
         } else {
-            res.status(400).send({ok: false, message: 'Pet not found'})
+            res.status(400).send({ ok: false, message: 'Pet not found' })
         }
     } catch (err) {
         console.log(err)
@@ -69,4 +81,4 @@ async function deletePet(req, res) {
     }
 }
 
-module.exports = { getAllPets, getPets, addPets, updatePets, deletePet }
+module.exports = { getAllPets, getSearchedPets, getSinglePets, addPets, updatePets, deletePets }

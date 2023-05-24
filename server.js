@@ -19,7 +19,8 @@ app.use('/pets', petsRoute) // for any req with /pets
 app.use('/users', usersRoute) // for any req with /users
 
 // connect to db, & if connected the server can start listening
-dbConnection.migrate.latest() // run latest db migration
+dbConnection.migrate
+    .latest() // run latest db migration
     .then((migration) => {
         if (migration) { // if successful, server listen
             console.log('migration connected to DB', migration);

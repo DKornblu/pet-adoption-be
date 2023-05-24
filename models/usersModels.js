@@ -43,5 +43,29 @@ async function deleteUserDetails(userId) {
     }
 }
 
+async function savePetByUser(saveObject) {
+    try {
+        const [savedId] = await dbConnection.from('saved_pets').insert(saveObject);
+        saveObject.id = savedId;
+        return saveObject;
+    } catch (err) {
+        console.log(err);
+    }
+}
 
-module.exports = { getUserList, getUserByEmail, addNewUser, deleteUserDetails }
+async function isSavedByUser(saveObject) {
+    try {
+        const saveDetails = await dbConnection.from('saved_pets').where({ pet_id: saveObject.pet_id, user_id: saveObject.user_id }).first();
+        console.log('Save exists', saveDetails)
+        if (saveDetails.id) {
+            return true;
+        } else {
+            return false
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+
+module.exports = { getUserList, getUserByEmail, addNewUser, deleteUserDetails, savePetByUser, isSavedByUser }
